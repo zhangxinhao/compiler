@@ -1,11 +1,14 @@
-scanner: lex.yy.c token.h
-	g++ -w -std=c++11 -o scanner lex.yy.c symbolTable.cpp
+compiler: lex.yy.c tree.cpp y.tab.c
+	g++ -w -std=c++11 lex.yy.c tree.cpp y.tab.c -o compiler
 
 lex.yy.c: scanner.l
-	flex $<
+	flex -o lex.yy.c scanner.l
 
-run:
-	make && ./scanner < sample.c > out.txt
+y.tab.c: parser.y
+	bison -dy parser.y
 
 clean:
-	rm lex.yy.c scanner && : > out.txt
+	rm lex.yy.c y.tab.h y.tab.c compiler && : > output
+
+run: compiler
+	./compiler
